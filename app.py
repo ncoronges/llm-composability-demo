@@ -66,18 +66,17 @@ async def handle_message(channel_id:str, payload:dict):
         for m in messages:
             if ("subtype" in m):
                 continue
-            user = m["user"]
-            text = m["text"].rstrip()
-            role = "assistant" if (user == bot_user['user_id']) else "user"
-            pm = {"role":role, "content":text}
+            role = "assistant" if (m["user"] == bot_user['user_id']) else "user"
+            pm = {"role":role, "content":m["text"].rstrip()}
             prompt_messages.insert(0,pm)
 
         channel_context = load_prompt_context("onboarding")
 
         # replace with real channels
+        """
         available_channels = slack_web_client.conversations_list(types="public_channel", exclude_archived=True)
         channel_context = replace_channels_in_prompt(channel_context, available_channels)
-        
+        """
         prompt_messages.insert(0, {"role":"system", "content":channel_context})
 
         logger.debug("*** PROMPT MESSAGES ***")
@@ -95,9 +94,9 @@ async def handle_message(channel_id:str, payload:dict):
             return
 
         # now we are reinserting correct links to channels
-        for c in available_channels["channels"]:
+        """for c in available_channels["channels"]:
             if (text.find(c["name"]) > -1):
-                text = text.replace("#"+c["name"], "<#"+c["id"]+"|" + c["name"] + ">")
+                text = text.replace("#"+c["name"], "<#"+c["id"]+"|" + c["name"] + ">")"""
 
         logger.info("sending slack response to channel: "+channel_id)
         response = slack_web_client.chat_postMessage(channel=channel_id, text=text)
