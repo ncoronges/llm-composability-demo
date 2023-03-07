@@ -1,0 +1,33 @@
+Generate profiles (PROFILES) about each user based on their chat history (CHAT).
+Use the description field in the JSON object to summarize their interests and anything else you can glean about them from what they say.
+
+CHAT:
+<@U50101>: I'm a CTO at a large fitness brand based in Europe. Interested in all things sports, technology, and fitness tracking. When I can find the time, I'm out cycling and mountain climbing in the Alps.
+<@U5B232>: I've been looking into investments in China and Asia more broadly. Primarily Investment banking. Also interested in Emerging tech, blockchain and crypto.
+<@AI>: We'll make a note of that. Where are you based?
+<@U5B232>: I'm based in Washington, DC, but I travel often to Hong Kong and London.
+
+PROFILES:
+```json
+{
+    "U50101": 
+    {
+        "description":"CTO based in Europe whose professional interests include Sports, Technology and Finance. Personal interests include cylcing and mountain climbing."
+    },
+    "U5B232":
+    {
+        "description":"Interests include China and Asia, Investment Banking, Emerging tech, blockchain, and crypto. Based in Washington, D.C. but travels to London and Hong Kong"
+    }
+}
+```
+
+CHAT:
+{% if messages %}
+{% for m in messages %}
+<@{{m.user}}>:{{m.text}}
+{% endfor %}
+{% endif %}
+
+PROFILES:
+
+

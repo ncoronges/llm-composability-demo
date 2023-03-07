@@ -10,6 +10,7 @@ import time
 from loguru import logger
 from project_utils import *
 import jinja2
+from profiles_manager import ProfilesManager
 
 # Initialize a Flask app to host the events adapter
 app = Flask(__name__)
@@ -20,6 +21,9 @@ slack_web_client = WebClient(token=os.environ['SLACK_TOKEN'])
 
 # initialize openai client
 openai.api_key = os.environ['OPENAI_API_KEY']
+
+# Initialize profiles 
+profiles_manager = ProfilesManager(slack_web_client, openai)
 
 # who am i 
 bot_user = {}
@@ -106,6 +110,20 @@ async def handle_message(channel_id:str, payload:dict):
         logger.opt(exception=True).error("Exception:")
         raise e
 
+"""
+Called from scheduled job to generate cached data
+"""
+@app.route("/generate-profiles", methods=["POST", "GET"])
+def generate_profiles():
+    logger.info("generate_profiles()")
+    try: 
+        profiles_manager.generate_profiles()
+
+    except Exception as e:
+        logger.error("generate_cached_data() exception: "+str(e))
+        logger.opt(exception=True).error("Exception:")
+        return '{"status":"error"}'
+    return '{"status":"ok"}'
 
 if __name__ == "__main__":
     response = slack_web_client.users_profile_get()
