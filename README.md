@@ -1,25 +1,13 @@
-# gpt3-bloomberg-demo
+# LLM Composability App Demo 
 
-gpt3-bloomberg-demo uses the Slack Events API and OpenAI's GPT-3 API to simulate a community platform AI guide. The bot has different modes of operation but the primary mode is "onboarding", where it will interact with members, providing inights and recommendations. The bot uses OpenAI's GPT3 to do text completions as well as other tasks like building user profiles and summarizing news articles. 
-
-![sample chat](img/sample2.jpg =200x)
+The demo uses the Slack Events API and OpenAI's GPT-3.5 ChatCompletion API to simulate a community platform AI guide. The bot's primary mode is "onboarding", where it will interact with members, providing inights and recommendations and links to other channels.
 
 To run locally grab source and activate environment.
 ```
-git clone --branch master https://github.com/ncoronges/gpt3-ben-demo 
-cd gpt3-ben-demo
+git clone --branch master https://github.com/ncoronges/llm-composability-demo
+cd llm-composability-demo
 source ./env/bin/activate
-python3 -m pip install -r requirements.txt
-```
-
-To escape the (env) mode use the *deactivate* command.
-```
-deactivate
-```
-
-To enable debug mode on Flask, set FLASK_ENV to "development"
-```
-export FLASK_ENV=development
+pip install -r requirements.txt
 ```
 
 To do local development you will need to set up the app to listen to events from the Slack API event dispatcher. That means your app has to be accessible on the internet (more on that below), and you will need an instance of slack configured to point to your local instance. 
