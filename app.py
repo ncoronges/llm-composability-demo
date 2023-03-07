@@ -9,6 +9,7 @@ import concurrent.futures
 import time 
 from loguru import logger
 from project_utils import *
+import jinja2
 
 # Initialize a Flask app to host the events adapter
 app = Flask(__name__)
@@ -70,14 +71,13 @@ async def handle_message(channel_id:str, payload:dict):
             pm = {"role":role, "content":m["text"].rstrip()}
             prompt_messages.insert(0,pm)
 
-        channel_context = load_prompt_context("onboarding")
+        prompt_context = load_prompt_context("onboarding-with-channels")
 
         # replace with real channels
-        """
         available_channels = slack_web_client.conversations_list(types="public_channel", exclude_archived=True)
-        channel_context = replace_channels_in_prompt(channel_context, available_channels)
-        """
-        prompt_messages.insert(0, {"role":"system", "content":channel_context})
+        prompt_context = jinja2.Template(prompt_context).render(channels=available_channels["channels"])
+
+        prompt_messages.insert(0, {"role":"system", "content":prompt_context})
 
         logger.debug("*** PROMPT MESSAGES ***")
         logger.debug(prompt_messages)
@@ -94,9 +94,9 @@ async def handle_message(channel_id:str, payload:dict):
             return
 
         # now we are reinserting correct links to channels
-        """for c in available_channels["channels"]:
-            if (text.find(c["name"]) > -1):
-                text = text.replace("#"+c["name"], "<#"+c["id"]+"|" + c["name"] + ">")"""
+        #for c in available_channels["channels"]:
+        #    if (text.find(c["name"]) > -1):
+        #        text = text.replace("#"+c["name"], "<#"+c["id"]+"|" + c["name"] + ">")
 
         logger.info("sending slack response to channel: "+channel_id)
         response = slack_web_client.chat_postMessage(channel=channel_id, text=text)
