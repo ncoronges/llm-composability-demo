@@ -78,8 +78,9 @@ async def handle_message(channel_id:str, payload:dict):
         prompt_context = load_prompt_context("onboarding-with-channels")
 
         # replace with real channels
-        available_channels = slack_web_client.conversations_list(types="public_channel", exclude_archived=True)
-        prompt_context = jinja2.Template(prompt_context).render(channels=available_channels["channels"])
+        channels = slack_web_client.conversations_list(types="public_channel", exclude_archived=True)
+        available_channels = [c for c in channels["channels"] if (c["name"].find("topic") != -1 or c["name"].find("community") != -1)]
+        prompt_context = jinja2.Template(prompt_context).render(channels=available_channels)
 
         prompt_messages.insert(0, {"role":"system", "content":prompt_context})
 
@@ -96,11 +97,6 @@ async def handle_message(channel_id:str, payload:dict):
         if (text.strip() == ""):
             logger.debug("no response from gpt3. ignoring..")
             return
-
-        # now we are reinserting correct links to channels
-        #for c in available_channels["channels"]:
-        #    if (text.find(c["name"]) > -1):
-        #        text = text.replace("#"+c["name"], "<#"+c["id"]+"|" + c["name"] + ">")
 
         logger.info("sending slack response to channel: "+channel_id)
         response = slack_web_client.chat_postMessage(channel=channel_id, text=text)
