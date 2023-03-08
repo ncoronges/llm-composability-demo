@@ -14,7 +14,8 @@ pip install -r requirements.txt
 
 To do local development you will need to set up the app to listen to events from the Slack API event dispatcher. That means your app has to be accessible on the internet (more on that below), and you will need an instance of slack configured to point to your local instance. 
 
-To set up the app in slack, you'll need to create a new App and provide the necessary scopes: 
+To set up the app in slack, you'll need to create a new App and provide the necessary scopes. (You may be able to setup with the slack_app_manifest.yaml file included in repo but this is still a beta feature in slack.) 
+
 - channels:history
 - chat:write
 - im:write
